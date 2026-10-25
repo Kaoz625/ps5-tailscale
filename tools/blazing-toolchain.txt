@@ -1,0 +1,13 @@
+Blazing fork of holdmysocks/ps5-tailscale (branch blazing, based on tag v0.7.1 = e4986b4d52af6a63f9be14d9de616d267c566de1)
+Change: HTTP proxy keeps up to 32 idle connections per host (Go default was 2), idle timeout 90 s.
+Version string: 0.7.1-blz<N> (does not parse as a release version, so the status page never offers
+an upstream release over it; update by rebuilding this branch).
+
+Pinned toolchain (built on the Dell WSL, /root/ps5-tailscale-build):
+  go1.27.1.linux-amd64.tar.gz      sha256 63d339f0da5ab53635a56f2490a7984dfe12dfcff22ad749f63edaf590168445 (go.dev)
+    + patches/go1.27.1-ps5.patch (upstream)
+  ps5-payload-sdk v0.43 zip        sha256 a9cc9929f21b2b2c5d5b309f3bab4997067c45281c0622cf4838b1aecba66fcb
+                                   (github.com/ps5-payload-dev/sdk tag v0.43)
+  clang: system LLVM on Ubuntu 24.04 through the SDK's prospero-clang wrapper
+Mirror of both archives: Dell WSL /root/ps5-tailscale-build/toolchain/
+Build: tools/build-payload-linux.sh 0.7.1-blz1   -> out/tailscale.elf

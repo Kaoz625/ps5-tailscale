@@ -17,13 +17,7 @@ import (
 // the browser, open tailnet hosts.
 func (d *daemon) serveProxy(ln net.Listener) {
 	d.logf("http proxy listening on %s", ln.Addr())
-	transport := &http.Transport{
-		DialContext:           d.proxyDial,
-		ForceAttemptHTTP2:     false,
-		MaxIdleConns:          32,
-		IdleConnTimeout:       60 * time.Second,
-		ResponseHeaderTimeout: 60 * time.Second,
-	}
+	transport := newProxyTransport(d.proxyDial)
 	srv := &http.Server{
 		ReadHeaderTimeout: 15 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -57,6 +51,28 @@ func (d *daemon) serveProxy(ln net.Listener) {
 	// turned off or moved from the settings.
 	if err := srv.Serve(ln); err != nil && err != http.ErrServerClosed && !errors.Is(err, net.ErrClosed) && !d.stopping() {
 		d.logf("http proxy stopped: %v", err)
+	}
+}
+
+// Keep-alive pool for the proxy. Go's default is 2 idle connections per
+// host, so a client that keeps more requests in flight to the same server
+// (a streaming reader with 8 workers, say) had most of its requests dial a
+// new tailnet TCP connection: a full handshake plus a fresh slow start each
+// time, which costs seconds on a slow or lossy path away from home.
+const (
+	proxyMaxIdleConns        = 64
+	proxyMaxIdleConnsPerHost = 32
+	proxyIdleConnTimeout     = 90 * time.Second
+)
+
+func newProxyTransport(dial func(ctx context.Context, network, addr string) (net.Conn, error)) *http.Transport {
+	return &http.Transport{
+		DialContext:           dial,
+		ForceAttemptHTTP2:     false,
+		MaxIdleConns:          proxyMaxIdleConns,
+		MaxIdleConnsPerHost:   proxyMaxIdleConnsPerHost,
+		IdleConnTimeout:       proxyIdleConnTimeout,
+		ResponseHeaderTimeout: 60 * time.Second,
 	}
 }
 
