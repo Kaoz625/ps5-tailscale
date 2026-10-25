@@ -10,4 +10,7 @@ Pinned toolchain (built on the Dell WSL, /root/ps5-tailscale-build):
                                    (github.com/ps5-payload-dev/sdk tag v0.43)
   clang: Ubuntu 24.04 llvm-18 (18.1.x, first LLVM with ld.lld) through the SDK prospero-clang wrapper
 Mirror of both archives: Dell WSL /root/ps5-tailscale-build/toolchain/
+Go modules (pinned by tsd/go.sum) mirrored as toolchain/gomodcache-0.7.1-blz1.tgz
+  sha256 096cc6d9a8e8c066425383d752071f4e0a32ae028c62bfbdf9e9e650e4479e3d (GOMODCACHE/cache/download;
+  offline build: untar into $GOMODCACHE/cache and set GOFLAGS=-mod=mod GOPROXY=off)
 Build: tools/build-payload-linux.sh 0.7.1-blz1   -> out/tailscale.elf
