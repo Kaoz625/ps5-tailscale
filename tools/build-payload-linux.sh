@@ -36,7 +36,7 @@ OUT="$ROOT/out"; mkdir -p "$OUT" "$ROOT/.gotmp" "$ROOT/.gocache"
 # also has ld.lld (Ubuntu's llvm-19 here came without lld).
 if [ -z "${LLVM_CONFIG:-}" ]; then
     for c in llvm-config-21 llvm-config-20 llvm-config-19 llvm-config-18 llvm-config; do
-        if command -v "$c" >/dev/null && [ -x "$("$c" --bindir)/ld.lld" ]; then export LLVM_CONFIG="$c"; break; fi
+        if command -v "$c" >/dev/null && [ -x "$("$c" --bindir)/ld.lld" ]; then export LLVM_CONFIG="$(command -v "$c")"; break; fi
     done
 fi
 echo "LLVM: ${LLVM_CONFIG:-?} $(${LLVM_CONFIG:-llvm-config} --version)"
