@@ -32,6 +32,14 @@ OUT="$ROOT/out"; mkdir -p "$OUT" "$ROOT/.gotmp" "$ROOT/.gocache"
     "$GOROOT_PS5/bin/go" build -buildmode=pie -trimpath \
     -ldflags="-s -w -X main.version=$VERSION" -o "$OUT/tailscale.bin" .)
 
+# The SDK wrapper takes the newest llvm-config it finds; pick one whose LLVM
+# also has ld.lld (Ubuntu's llvm-19 here came without lld).
+if [ -z "${LLVM_CONFIG:-}" ]; then
+    for c in llvm-config-21 llvm-config-20 llvm-config-19 llvm-config-18 llvm-config; do
+        if command -v "$c" >/dev/null && [ -x "$("$c" --bindir)/ld.lld" ]; then export LLVM_CONFIG="$c"; break; fi
+    done
+fi
+echo "LLVM: ${LLVM_CONFIG:-?} $(${LLVM_CONFIG:-llvm-config} --version)"
 CC="$SDK/bin/prospero-clang"
 "$CC" -O2 -Wall -DASSET_DIR="\"$ROOT/appicon\"" \
     -lSceIpmi -lSceAppInstUtil -lSceUserService -lSceSystemService \

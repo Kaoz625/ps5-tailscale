@@ -8,6 +8,6 @@ Pinned toolchain (built on the Dell WSL, /root/ps5-tailscale-build):
     + patches/go1.27.1-ps5.patch (upstream)
   ps5-payload-sdk v0.43 zip        sha256 a9cc9929f21b2b2c5d5b309f3bab4997067c45281c0622cf4838b1aecba66fcb
                                    (github.com/ps5-payload-dev/sdk tag v0.43)
-  clang: system LLVM on Ubuntu 24.04 through the SDK's prospero-clang wrapper
+  clang: Ubuntu 24.04 llvm-18 (18.1.x, first LLVM with ld.lld) through the SDK prospero-clang wrapper
 Mirror of both archives: Dell WSL /root/ps5-tailscale-build/toolchain/
 Build: tools/build-payload-linux.sh 0.7.1-blz1   -> out/tailscale.elf
